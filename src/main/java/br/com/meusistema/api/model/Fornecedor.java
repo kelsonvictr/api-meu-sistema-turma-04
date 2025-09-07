@@ -33,6 +33,11 @@ public class Fornecedor {
     @Column(name = "tipo_fornecedor", nullable = false)
     private TipoFornecedorEnum tipoFornecedor;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    private Endereco endereco;
+
+
     @Column(name = "criado_em", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime criadoEm;
