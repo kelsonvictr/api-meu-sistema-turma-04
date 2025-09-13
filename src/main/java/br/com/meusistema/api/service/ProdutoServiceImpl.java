@@ -47,7 +47,18 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO produtoRequestDTO) {
-        return null;
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Produto não encontrado"));
+
+
+        produto.setNome(produtoRequestDTO.nome());
+        produto.setPreco(produtoRequestDTO.preco());
+        produto.setDescricao(produtoRequestDTO.descricao());
+        produto.setQuantidadeEstoque(produtoRequestDTO.quantidadeEstoque());
+        produto.setFornecedor(buscarFornecedor(produtoRequestDTO.fornecedorId()));
+
+        return produtoMapper.toDTO(produtoRepository.save(produto));
     }
 
     @Override
