@@ -63,7 +63,13 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public void deletar(Long id) {
-
+        if (!produtoRepository.existsById(id)) {
+            throw new
+                    ResponseStatusException
+                    (HttpStatus.NOT_FOUND,
+                    "Produto não encontrado");
+        }
+        produtoRepository.deleteById(id);
     }
 
     private Fornecedor buscarFornecedor(Long id) {
