@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProdutoServiceImpl implements ProdutoService {
@@ -26,6 +28,31 @@ public class ProdutoServiceImpl implements ProdutoService {
        produto.setFornecedor
                (buscarFornecedor(produtoRequestDTO.fornecedorId()));
        return produtoMapper.toDTO(produtoRepository.save(produto));
+    }
+
+    @Override
+    public List<ProdutoResponseDTO> listarTodos() {
+        return produtoRepository.findAll().stream()
+                .map(produtoMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public ProdutoResponseDTO buscarPorId(Long id) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return produtoMapper.toDTO(produto);
+    }
+
+    @Override
+    public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO produtoRequestDTO) {
+        return null;
+    }
+
+    @Override
+    public void deletar(Long id) {
+
     }
 
     private Fornecedor buscarFornecedor(Long id) {

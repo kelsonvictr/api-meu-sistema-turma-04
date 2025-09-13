@@ -6,10 +6,9 @@ import br.com.meusistema.api.service.ProdutoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/produtos")
@@ -23,5 +22,17 @@ public class ProdutoController {
         ProdutoResponseDTO produtoCriado = produtoService.criarProduto(produtoRequestDTO);
         return ResponseEntity.status(201).body(produtoCriado);
     }
+
+    @GetMapping
+    public ResponseEntity<List<ProdutoResponseDTO>> listarTodos() {
+        return ResponseEntity.ok(produtoService.listarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(produtoService.buscarPorId(id));
+    }
+
+
 
 }
