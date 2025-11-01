@@ -5,11 +5,11 @@ data "aws_vpc" "default" {
 
 resource "aws_security_group" "rds" {
   name        = "${var.app_name}-rds-sg"
-  description = "Permite acesso externo ao PostgreSQL para fins de aula."
+  description = "Allow PostgreSQL access for classroom demo."
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description = "Acesso ao PostgreSQL (ajuste para restringir em produção)"
+    description = "Class demo access to PostgreSQL port."
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
