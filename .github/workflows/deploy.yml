@@ -1,0 +1,65 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  # Mantenha os nomes alinhados com o que foi definido no Terraform (var.app_name).
+  APP_NAME: meusistema
+  EB_APP_NAME: meusistema-backend
+  EB_ENV_NAME: meusistema-backend-env
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  BEANSTALK_BUCKET: ${{ secrets.BEANSTALK_BUCKET }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build backend (Spring Boot JAR)
+        run: ./mvnw -B package -DskipTests
+
+      - name: Prepare Elastic Beanstalk bundle
+        run: |
+          BACKEND_JAR=$(ls target/*.jar | head -n 1)
+          mkdir -p bundle
+          cp "$BACKEND_JAR" bundle/application.jar
+          cat <<'EOF' > bundle/Procfile
+          web: java -jar application.jar
+          EOF
+          cd bundle
+          zip -r ../backend.zip .
+          cd ..
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload backend bundle to S3
+        run: aws s3 cp backend.zip s3://${{ env.BEANSTALK_BUCKET }}/backend-${{ github.sha }}.zip
+
+      - name: Deploy new version to Elastic Beanstalk
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name "${{ env.EB_APP_NAME }}" \
+            --version-label "${{ github.sha }}" \
+            --source-bundle S3Bucket="${{ env.BEANSTALK_BUCKET }}",S3Key="backend-${{ github.sha }}.zip"
+
+          aws elasticbeanstalk update-environment \
+            --application-name "${{ env.EB_APP_NAME }}" \
+            --environment-name "${{ env.EB_ENV_NAME }}" \
+            --version-label "${{ github.sha }}"
