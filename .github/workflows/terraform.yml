@@ -1,0 +1,43 @@
+name: Provision Infrastructure
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  TF_VAR_region: ${{ vars.AWS_REGION || 'us-east-1' }}
+  TF_VAR_db_user: ${{ secrets.TF_DB_USER }}
+  TF_VAR_db_password: ${{ secrets.TF_DB_PASSWORD }}
+  TF_VAR_artifact_bucket_name: ${{ vars.ARTIFACT_BUCKET_NAME || 'meusistema-backend-artifacts-kelson' }}
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform init
+        working-directory: infra
+        run: terraform init
+
+      - name: Terraform apply
+        working-directory: infra
+        run: terraform apply -auto-approve
+
+      - name: Show Terraform outputs
+        working-directory: infra
+        run: terraform output

@@ -1,15 +1,3 @@
-resource "aws_s3_bucket" "beanstalk_artifacts" {
-  bucket = var.artifact_bucket_name
-}
-
-resource "aws_s3_bucket_versioning" "beanstalk_artifacts" {
-  bucket = aws_s3_bucket.beanstalk_artifacts.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
 resource "aws_elastic_beanstalk_application" "backend" {
   name        = "${var.app_name}-backend"
   description = "Aplicação Elastic Beanstalk para o backend Spring Boot."
