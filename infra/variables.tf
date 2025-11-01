@@ -8,7 +8,7 @@ variable "region" {
 variable "app_name" {
   description = "Nome base da aplicação (usado em Elastic Beanstalk, buckets, etc.)."
   type        = string
-  default     = "meusistema"
+  default     = "meu-sistema"
 }
 
 variable "artifact_bucket_name" {

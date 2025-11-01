@@ -7,9 +7,9 @@ on:
 
 env:
   # Mantenha os nomes alinhados com o que foi definido no Terraform (var.app_name).
-  APP_NAME: meusistema
-  EB_APP_NAME: meusistema-backend
-  EB_ENV_NAME: meusistema-backend-env
+  APP_NAME: meu-sistema
+  EB_APP_NAME: meu-sistema-backend
+  EB_ENV_NAME: meu-sistema-backend-env
   AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
   BEANSTALK_BUCKET: ${{ secrets.BEANSTALK_BUCKET }}
 
