@@ -27,7 +27,7 @@ resource "aws_security_group" "rds" {
 resource "aws_db_instance" "postgres" {
   identifier              = "${var.app_name}-db"
   engine                  = "postgres"
-  engine_version          = "15.4"
+  engine_version          = "15.3"
   instance_class          = "db.t3.micro" // Compatível com free tier
   allocated_storage       = 20
   db_name                 = "meusistema"
