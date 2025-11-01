@@ -4,10 +4,10 @@ resource "aws_elastic_beanstalk_application" "backend" {
 }
 
 resource "aws_elastic_beanstalk_environment" "backend_env" {
-  name                = "${var.app_name}-backend-env"
-  application         = aws_elastic_beanstalk_application.backend.name
-  solution_stack_name = "64bit Amazon Linux 2023 v4.0.0 running Corretto 17" // Plataforma pronta para executar JAR do Spring Boot
-  tier                = "WebServer"
+  name          = "${var.app_name}-backend-env"
+  application   = aws_elastic_beanstalk_application.backend.name
+  platform_arn  = "arn:aws:elasticbeanstalk:${var.region}::platform/Corretto 17 running on 64bit Amazon Linux 2023/4.1.3"
+  tier          = "WebServer"
 
   // Mantém as instâncias dentro do free tier
   setting {
